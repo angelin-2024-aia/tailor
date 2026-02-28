@@ -1,0 +1,19 @@
+<!-- This file is deprecated. Use layout.html instead -->
+{% extends "layout.html" %}
+{% block content %}
+<div class="card text-center py-5">
+    <p class="text-muted">This page is not available. Please use the navigation menu.</p>
+</div>
+{% endblock %}
+
+            <a class="navbar-brand fw-bold text-primary" href="/"><i class="fas fa-cut me-2"></i>Mery Stitch & Style</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">Dashboard</a>
+                <a class="nav-link" href="/customers">Customers</a>
+                <a class="nav-link" href="/orders">Orders</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container fade-in">{% block content %}{% endblock %}</div>
+</body>
+</html>

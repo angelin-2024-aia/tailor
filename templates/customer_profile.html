@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="/customers" style="text-decoration: none; color: var(--primary);"><i class="bi bi-arrow-left"></i> Back to Customers</a>
+</div>
+
+<div class="card shadow-lg p-4 mb-4">
+    <div style="display: flex; align-items: center; gap: 2rem;">
+        <div style="width: 100px; height: 100px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800;">
+            {{ customer.name[0] | upper }}
+        </div>
+        <div>
+            <h2 class="fw-bold mb-0">{{ customer.name }}</h2>
+            <p class="text-muted mb-0"><i class="bi bi-telephone"></i> {{ customer.phone }}</p>
+            <p class="text-muted mb-0"><i class="bi bi-geo-alt"></i> {{ customer.address }}</p>
+        </div>
+    </div>
+</div>
+
+<h4 class="fw-bold mb-3">Order History</h4>
+{% if orders %}
+<div class="card">
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Garment Type</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Measurements</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><strong>{{ o.garment_type }}</strong></td>
+                    <td>{{ o.due_date }}</td>
+                    <td class="fw-bold text-primary">₹{{ o.price }}</td>
+                    <td>
+                        <span class="badge {% if o.status == 'Delivered' %}badge-delivered{% else %}badge-pending{% endif %}">
+                            {{ o.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <small style="display: block; white-space: pre-wrap; word-break: break-word; color: #666;">{{ o.measurements }}</small>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card text-center py-5">
+    <p class="text-muted">No orders for this customer yet. <a href="/order/new">Create an order</a></p>
+</div>
+{% endif %}
+{% endblock %}

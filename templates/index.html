@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h2 class="fw-bold" style="font-size:32px; margin-bottom:0.5rem;">Dashboard</h2>
+        <p style="color:var(--muted); font-size:14px; margin:0;">Welcome back to Mery Stitch & Style</p>
+    </div>
+    <span class="bg-white px-4 py-2 rounded-pill shadow-sm fw-bold" style="font-size:14px;">{{ today }}</span>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.5rem; margin-bottom:2rem;">
+    <div class="stat-card" style="display:flex; align-items:center; gap:1.2rem; border:none; padding:1.5rem; background:white;">
+        <div style="background:#0EA5E9; color:white; width:70px; height:70px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0;">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div style="flex:1;">
+            <small style="color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; font-size:11px; display:block;">Total Customers</small>
+            <h3 style="font-size:42px; font-weight:800; color:var(--dark); margin:0.3rem 0 0 0; line-height:1;">{{ stats.c }}</h3>
+        </div>
+    </div>
+    <div class="stat-card" style="display:flex; align-items:center; gap:1.2rem; border:none; padding:1.5rem; background:white;">
+        <div style="background:#ef4444; color:white; width:70px; height:70px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0;">
+            <i class="bi bi-clock-history"></i>
+        </div>
+        <div style="flex:1;">
+            <small style="color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; font-size:11px; display:block;">Pending Orders</small>
+            <h3 style="font-size:42px; font-weight:800; color:var(--dark); margin:0.3rem 0 0 0; line-height:1;">{{ stats.o }}</h3>
+        </div>
+    </div>
+    <div class="stat-card" style="display:flex; align-items:center; gap:1.2rem; border:none; padding:1.5rem; background:white;">
+        <div style="background:#10b981; color:white; width:70px; height:70px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0;">
+            <i class="bi bi-wallet2"></i>
+        </div>
+        <div style="flex:1;">
+            <small style="color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; font-size:11px; display:block;">Today's Cash</small>
+            <h3 style="font-size:42px; font-weight:800; color:var(--dark); margin:0.3rem 0 0 0; line-height:1;">₹ {{ "{:,.2f}".format(stats.r) }}</h3>
+        </div>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:2rem; margin-top:2rem;">
+    <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid #E2E8F0;">
+            <h4 style="margin:0; font-size:20px; color:var(--dark);"><i class="bi bi-calendar-check" style="margin-right:0.5rem; color:var(--primary);"></i>Upcoming Deliveries</h4>
+            <span style="background:rgba(14,165,233,0.1); color:var(--primary); padding:0.35rem 0.75rem; border-radius:20px; font-size:12px; font-weight:700;">{{ orders|length }}</span>
+        </div>
+        {% if orders %}
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Customer</th><th>Item</th><th>Due Date</th><th>Amount</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for o in orders %}
+                    <tr>
+                        <td><strong>{{ o.name }}</strong></td>
+                        <td><span style="background:#f0f2f5; padding:4px 8px; border-radius:6px;">{{ o.garment_type }}</span></td>
+                        <td><span style="color:var(--primary); font-weight:600;">{{ o.due_date }}</span></td>
+                        <td class="fw-bold">₹{{ o.price }}</td>
+                        <td>
+                            <a href="/order/{{ o.id }}/edit" class="btn btn-sm btn-light" style="text-decoration:none;">Edit</a>
+                            <a href="/order/{{ o.id }}/bill" class="btn btn-sm btn-light" style="text-decoration:none;">Bill</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:2rem; color:var(--muted);">
+            <i class="bi bi-inbox" style="font-size:32px; opacity:0.3; display:block; margin-bottom:0.5rem;"></i>
+            <p style="margin:0;">No orders found. <a href="/order/new" style="color:var(--primary); text-decoration:none; font-weight:600;">Create a new order</a></p>
+        </div>
+        {% endif %}
+    </div>
+    <div style="background:linear-gradient(135deg, #0EA5E9 0%, #0088CC 100%); border-radius:16px; padding:2rem; color:white; height:fit-content;">
+        <h3 style="margin:0 0 0.5rem 0; font-size:22px; font-weight:800; color:white;">Quick Actions</h3>
+        <p style="margin:0 0 1.5rem 0; color:rgba(255,255,255,0.9); font-size:14px;">Manage your shop efficiently</p>
+        <a href="/order/new" class="btn btn-white w-100" style="margin-bottom:0.75rem;"><i class="bi bi-plus-lg me-2"></i>New Order</a>
+        <a href="/customers/new" class="btn btn-white w-100" style="margin-bottom:0.75rem;"><i class="bi bi-person-plus-fill me-2"></i>New Customer</a>
+        <a href="/orders" class="btn btn-white w-100" style="margin-bottom:0.75rem;"><i class="bi bi-list-check me-2"></i>View All Orders</a>
+        <a href="/receipt" class="btn btn-white w-100"><i class="bi bi-receipt me-2"></i>Daily Register</a>
+    </div>
+</div>
+{% endblock %}

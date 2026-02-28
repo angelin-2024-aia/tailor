@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Edit Order #{{ order.id }}</h2>
+    <a href="/orders" style="text-decoration: none; color: var(--primary);"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="card shadow-lg p-4">
+    <form method="POST" action="/order/{{ order.id }}/edit">
+        <div class="mb-4">
+            <label class="form-label fw-bold">Order Status</label>
+            <select name="status" class="form-select bg-light border-0 p-3" required>
+                <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>🕒 Pending</option>
+                <option value="Ready" {% if order.status == 'Ready' %}selected{% endif %}>✅ Ready (Sends WhatsApp)</option>
+                <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>📦 Delivered</option>
+            </select>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Garment Type</label>
+                <input type="text" class="form-control bg-light border-0 p-3" value="{{ order.garment_type }}" disabled>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Due Date</label>
+                <input type="date" class="form-control bg-light border-0 p-3" value="{{ order.due_date }}" disabled>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Amount</label>
+                <input type="number" class="form-control bg-light border-0 p-3" value="{{ order.price }}" disabled>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Created</label>
+                <input type="text" class="form-control bg-light border-0 p-3" value="{{ order.created_at[:10] if order.created_at else 'N/A' }}" disabled>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Full Measurements</label>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <p style="margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 14px;">{{ order.measurements }}</p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary flex-grow-1" style="background-color: #008CBA; border: none; font-weight: bold; text-transform: uppercase;">
+                Update Status
+            </button>
+            <a href="/order/{{ order.id }}/bill" class="btn btn-success flex-grow-1" style="background-color: #12ad73; border: none; font-weight: bold; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                View Bill
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

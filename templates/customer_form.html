@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg p-4">
+            <h4 class="fw-bold mb-4 text-primary"><i class="bi bi-person-plus"></i> Add New Customer</h4>
+            {% if error %}
+            <div style="background:#fee2e2; color:#991b1b; padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                {{ error }}
+            </div>
+            {% endif %}
+            <form method="POST">
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Full Name</label>
+                    <input type="text" name="name" class="form-control p-3 border-0 bg-light" placeholder="Enter customer name" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Phone Number</label>
+                    <input type="tel" name="phone" class="form-control p-3 border-0 bg-light" placeholder="Enter phone number" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Address</label>
+                    <textarea name="address" class="form-control p-3 border-0 bg-light" placeholder="Enter address" rows="3"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary flex-grow-1">Save Customer</button>
+                    <a href="/customers" class="btn btn-light flex-grow-1">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

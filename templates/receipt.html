@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <h2 class="fw-bold">Daily Register & Receipts</h2>
+    <div class="fw-bold fs-5">
+        <span>Daily Balance:</span> <span class="text-success">₹{{ total_revenue }}</span>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-3">Delivered Orders (Last 10)</h5>
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Bill No</th>
+                        <th>Customer</th>
+                        <th>Garment Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th class="no-print">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in orders %}
+                    <tr>
+                        <td><strong>#{{ o.id }}</strong></td>
+                        <td>{{ o.name }}</td>
+                        <td>{{ o.garment_type }}</td>
+                        <td class="fw-bold text-success">₹{{ o.price }}</td>
+                        <td>{{ o.created_at[:10] if o.created_at else 'N/A' }}</td>
+                        <td class="no-print">
+                            <a href="/order/{{ o.id }}/bill" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-receipt"></i> View Bill
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-muted py-4">No delivered orders yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Daily Summary</h5>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 border rounded border-start border-4 border-success">
+                            <small class="text-muted fw-bold">DELIVERED TODAY</small>
+                            <h3 class="fw-bold mb-0">{{ orders|length }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded border-start border-4 border-primary">
+                            <small class="text-muted fw-bold">TOTAL REVENUE</small>
+                            <h3 class="fw-bold mb-0">₹{{ "{:,.2f}".format(total_revenue) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% if qr_code %}
+        <div class="card shadow-sm h-100 text-center">
+            <div class="card-body p-4">
+                <h6 class="fw-bold">GPay / PhonePe</h6>
+                <img src="data:image/png;base64,{{ qr_code }}" alt="UPI QR" class="img-fluid mb-2" style="max-height: 150px;">
+                <p class="small text-muted mb-0">Scan to settle daily balance</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="no-print text-center mt-5 mb-5">
+    <button class="btn btn-dark px-4 me-2" onclick="window.print()"><i class="bi bi-printer"></i> Print Register</button>
+    <button class="btn btn-light px-4" onclick="window.history.back()">Back</button>
+</div>
+
+<style>
+    @media print {
+        .no-print { display: none !important; }
+        .card { border: none !important; box-shadow: none !important; }
+    }
+</style>
+
+{% endblock %}

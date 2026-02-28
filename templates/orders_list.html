@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Order Management</h2>
+    <a href="/order/new" class="btn btn-primary">+ New Order</a>
+</div>
+
+<div class="card border-0 shadow-sm p-4">
+    {% if orders %}
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Garment</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Measurements</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><strong>{{ o.name }}</strong></td>
+                    <td>{{ o.garment_type }}</td>
+                    <td class="text-primary fw-bold">{{ o.due_date }}</td>
+                    <td>₹{{ o.price }}</td>
+                    <td>
+                        <span title="{{ o.measurements }}" style="cursor: help; text-decoration: underline dotted;">
+                            {{ o.measurements[:40] }}{% if o.measurements|length > 40 %}...{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {% if o.status == 'Delivered' %}badge-delivered{% else %}badge-pending{% endif %}">
+                            {{ o.status }}
+                        </span>
+                    </td>
+                    <td class="text-center" style="display: flex; gap: 0.5rem; justify-content: center;">
+                        <a href="/order/{{ o.id }}/edit" class="btn btn-sm btn-light" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="/order/{{ o.id }}/bill" class="btn btn-sm btn-light" title="View Bill">
+                            <i class="bi bi-receipt"></i>
+                        </a>
+                        <a href="/whatsapp/{{ o.id }}" class="btn btn-sm btn-light text-success" title="Send WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <a href="/delete/orders/{{ o.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this order?')" title="Delete">
+                            <i class="bi bi-trash3"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center text-muted py-4">No orders found. <a href="/order/new">Create a new order</a></p>
+    {% endif %}
+</div>
+{% endblock %}

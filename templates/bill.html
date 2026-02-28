@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    @media print {
+        .navbar, .btn-print, .btn-back { display: none !important; }
+        body { background: white !important; }
+        .bill-container { box-shadow: none !important; border: 1px solid #000 !important; margin: 0 auto !important; }
+    }
+    .bill-container {
+        max-width: 450px;
+        margin: 20px auto;
+        background: white;
+        padding: 30px;
+        border: 2px solid #222;
+        border-radius: 15px;
+        font-family: 'Courier New', Courier, monospace; /* Bill look kaaga */
+    }
+</style>
+
+<div class="container text-center mt-3">
+    <button onclick="window.print()" class="btn btn-dark btn-print mb-3">
+        <i class="bi bi-printer"></i> Print Bill
+    </button>
+</div>
+
+<div class="bill-container">
+    <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 15px; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-weight: bold;">✂ MERY STITCH & STYLE</h2>
+        <p style="margin: 5px 0; font-size: 14px;">Smart Stitching Solutions</p>
+        <p style="margin: 0; font-size: 12px;">Coimbatore | <strong>8056561764</strong></p>
+    </div>
+
+    <div style="font-size: 14px; line-height: 1.6;">
+        <p style="margin: 0;"><strong>Bill No:</strong> #{{ order.id }}</p>
+        <p style="margin: 0;"><strong>Date:</strong> {{ order.created_at[:10] if order.created_at else 'N/A' }}</p>
+        <p style="margin: 0;"><strong>Customer:</strong> {{ order.name }}</p>
+        <p style="margin: 0;"><strong>Phone:</strong> {{ order.phone }}</p>
+        <p style="margin: 0; margin-top: 5px; padding: 5px; background-color: {% if order.status == 'Pending' %}#fff3cd{% elif order.status == 'Ready' %}#d4edda{% else %}#d1ecf1{% endif %}; border-radius: 4px; border-left: 4px solid {% if order.status == 'Pending' %}#ffc107{% elif order.status == 'Ready' %}#28a745{% else %}#17a2b8{% endif %};"><strong>Status:</strong> {{ order.status }}</p>
+    </div>
+
+    <table style="width: 100%; margin-top: 15px; border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 10px 0;">
+        <tr style="font-weight: bold;">
+            <td style="padding: 5px 0;">Description</td>
+            <td style="text-align: right;">Amount</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0;">{{ order.garment_type }}</td>
+            <td style="text-align: right;">₹{{ order.price }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-size: 12px; color: #666;">Status: <strong style="{% if order.status == 'Pending' %}color: #ffc107;{% elif order.status == 'Ready' %}color: #28a745;{% else %}color: #17a2b8;{% endif %}">{{ order.status }}</strong></td>
+            <td></td>
+        </tr>
+        <tr style="font-size: 18px; font-weight: bold; border-top: 1px dashed #000;">
+            <td style="padding-top: 10px;">TOTAL</td>
+            <td style="text-align: right; padding-top: 10px;">₹{{ order.price }}</td>
+        </tr>
+    </table>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <p style="margin: 0; font-size: 12px; font-weight: bold;">SCAN TO PAY (GPay / PhonePe)</p>
+        
+        <div style="margin: 10px 0;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=messiamobiles2019@okaxis=MeryStitch%26am={{ order.price }}%26cu=INR" 
+                 alt="GPay QR" 
+                 style="border: 5px solid #fff; outline: 1px solid #ccc; padding: 5px;">
+        </div>
+
+        <p style="margin: 0; font-size: 13px;">GPay: <strong>{{ gpay_number }}</strong></p>
+        
+        <div style="margin: 15px 0;">
+            <a href="/whatsapp/bill/{{ order.id }}" class="btn btn-success" style="text-decoration: none; background-color: #25D366; border: none; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 14px;">
+                📱 Send Payment Details via WhatsApp
+            </a>
+        </div>
+        
+        <p style="margin-top: 15px; font-size: 11px; font-style: italic;">Thank you! Visit Again.</p>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <a href="/orders" class="btn btn-light btn-back">Back to List</a>
+</div>
+{% endblock %}

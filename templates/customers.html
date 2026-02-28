@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Customer Directory</h2>
+    <a href="/customers/new" class="btn btn-primary rounded-pill px-4">+ Add Customer</a>
+</div>
+
+<div class="card border-0 shadow-sm p-4">
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if customers %}
+                    {% for c in customers %}
+                    <tr>
+                        <td class="fw-bold text-primary"><a href="/customer/{{ c.id }}" style="text-decoration: none; color: var(--primary);">{{ c.name }}</a></td>
+                        <td><i class="bi bi-telephone text-muted me-2"></i>{{ c.phone }}</td>
+                        <td class="text-muted">{{ c.address }}</td>
+                        <td class="text-center">
+                            <a href="/delete/customers/{{ c.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this customer? All orders will be deleted.')">
+                                <i class="bi bi-trash3"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-3">No customers found. <a href="/customers/new">Add your first customer</a></td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
