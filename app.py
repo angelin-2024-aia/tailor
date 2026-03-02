@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime
 import urllib.parse
 import os
+import psycopg2
 
 # Try to import pywhatkit for automatic WhatsApp messages
 try:
@@ -18,10 +19,31 @@ GPAY_NUMBER = "8056561764"
 
 app = Flask(__name__)
 
-def get_db():
-    conn = sqlite3.connect("tailor_pro.db")
-    conn.row_factory = sqlite3.Row
-    return conn
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+def init_db():
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    # Customers table create panna
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS customers (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            phone TEXT
+        )
+    ''')
+    # Orders table create panna
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS orders (
+            id SERIAL PRIMARY KEY,
+            customer_id INTEGER REFERENCES customers(id),
+            item TEXT,
+            amount REAL
+        )
+    ''')
+    conn.commit()
+    cur.close()
+    conn.close()
 
 # Database setup
 def init_db():
