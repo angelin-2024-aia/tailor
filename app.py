@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import sqlite3
 from datetime import datetime
 import urllib.parse
+import os
 
 # Try to import pywhatkit for automatic WhatsApp messages
 try:
@@ -299,4 +300,6 @@ def receipt():
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    # Cloud-kaaga port-ah dynamic-ah edukanum
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
