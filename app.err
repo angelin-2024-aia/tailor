@@ -4,3 +4,16 @@ WARNING: This is a development server. Do not use it in a production deployment.
  * Running on http://192.168.87.224:10000
 Press CTRL+C to quit
 127.0.0.1 - - [03/Mar/2026 11:58:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 11:59:46] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 11:59:46] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [03/Mar/2026 11:59:54] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 11:59:54] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [03/Mar/2026 12:00:03] "GET /customers HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 12:00:03] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [03/Mar/2026 12:03:57] "GET /customers HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 12:03:57] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [03/Mar/2026 12:04:07] "GET /customers/new HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 12:04:07] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [03/Mar/2026 12:04:16] "POST /customers/new HTTP/1.1" 302 -
+127.0.0.1 - - [03/Mar/2026 12:04:20] "GET /customers HTTP/1.1" 200 -
+127.0.0.1 - - [03/Mar/2026 12:04:20] "GET /static/css/style.css HTTP/1.1" 304 -
