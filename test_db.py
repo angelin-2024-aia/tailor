@@ -2,7 +2,7 @@
 Quick local DB connection tester. Fill DATABASE_URL or set env var and run:
 
 Windows PowerShell example:
-$env:DATABASE_URL = "postgresql://postgres:NEWPASS@db.pbjnkefaueedsgxdxddo.supabase.co:5432/postgres?sslmode=require"
+$env:DATABASE_URL = "postgresql://postgres:PASSWORD@db.pbjnkefaueedsgxdxddo.supabase.co:5432/postgres?sslmode=require"
 python test_db.py
 """
 import os
@@ -16,10 +16,10 @@ if not url:
 
 try:
     conn = psycopg.connect(url, connect_timeout=5)
-    print('Connected successfully')
-    print('Server params:', conn.info.dsn_parameters)
+    print('✓ Connected successfully')
+    print(f'Database user:', conn.info.user if hasattr(conn.info, 'user') else 'Connected')
     conn.close()
 except Exception as e:
-    print('Connection failed:')
+    print('✗ Connection failed:')
     print(e)
     sys.exit(2)
