@@ -2,77 +2,80 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
 import urllib.parse
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
 import psycopg
 from psycopg.rows import dict_row
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'tailor_app_secret')
 
 # GPay/payment information
 GPAY_NUMBER = "8056561764"
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db():
-    # Render settings-la irukkura DATABASE_URL-ah direct-ah edukka idhu thaan vazhi
-    db_url = os.environ.get('DATABASE_URL')
-    if not db_url:
-        # Idhu oru safety check
-        return None
-    
-    conn = psycopg2.connect(
-        db_url, 
-        sslmode='require', 
-        cursor_factory=RealDictCursor
-    )
+    # Psycopg 3 syntax
+    conn = psycopg.connect(DATABASE_URL, row_factory=dict_row)
     return conn
 
 # Database setup (PostgreSQL Syntax)
 def init_db():
-    db = get_db()
-    cur = db.cursor()
-    # SQLite-la 'AUTOINCREMENT' irukkum, PostgreSQL-la 'SERIAL' pannanum
-    cur.execute("""CREATE TABLE IF NOT EXISTS customers (
-        id SERIAL PRIMARY KEY, 
-        name TEXT NOT NULL, 
-        phone TEXT NOT NULL UNIQUE, 
-        address TEXT)""")
-    
-    cur.execute("""CREATE TABLE IF NOT EXISTS orders (
-        id SERIAL PRIMARY KEY, 
-        customer_id INTEGER NOT NULL REFERENCES customers(id), 
-        garment_type TEXT NOT NULL, 
-        status TEXT DEFAULT 'Pending', 
-        price REAL NOT NULL, 
-        due_date DATE NOT NULL, 
-        measurements TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-    
-    cur.execute("""CREATE TABLE IF NOT EXISTS inventory (
-        id SERIAL PRIMARY KEY,
-        item_name TEXT NOT NULL,
-        quantity INTEGER DEFAULT 0,
-        unit TEXT DEFAULT 'pcs',
-        min_stock INTEGER DEFAULT 5)""")
-    
-    db.commit()
-    cur.close()
-    db.close()
+    try:
+        db = get_db()
+        cur = db.cursor()
+        
+        # Customers Table
+        cur.execute("""CREATE TABLE IF NOT EXISTS customers (
+            id SERIAL PRIMARY KEY, 
+            name TEXT NOT NULL, 
+            phone TEXT NOT NULL UNIQUE, 
+            address TEXT)""")
+        
+        # Orders Table
+        cur.execute("""CREATE TABLE IF NOT EXISTS orders (
+            id SERIAL PRIMARY KEY, 
+            customer_id INTEGER NOT NULL REFERENCES customers(id), 
+            garment_type TEXT NOT NULL, 
+            status TEXT DEFAULT 'Pending', 
+            price REAL NOT NULL, 
+            due_date DATE NOT NULL, 
+            measurements TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+        
+        # Inventory Table
+        cur.execute("""CREATE TABLE IF NOT EXISTS inventory (
+            id SERIAL PRIMARY KEY,
+            item_name TEXT NOT NULL,
+            quantity INTEGER DEFAULT 0,
+            unit TEXT DEFAULT 'pcs',
+            min_stock INTEGER DEFAULT 5)""")
+        
+        db.commit()
+        cur.close()
+        db.close()
+        print("Database initialized successfully!")
+    except Exception as e:
+        print(f"Database error: {e}")
 
 @app.route("/")
 def dashboard():
     db = get_db()
     cur = db.cursor()
+    
     cur.execute("SELECT COUNT(*) FROM customers")
     c_count = cur.fetchone()['count']
+    
     cur.execute("SELECT COUNT(*) FROM orders WHERE status != 'Delivered'")
     o_count = cur.fetchone()['count']
+    
     cur.execute("SELECT SUM(price) FROM orders WHERE status='Delivered'")
-    revenue = cur.fetchone()['sum'] or 0
+    res = cur.fetchone()
+    revenue = res['sum'] if res and res['sum'] else 0
+    
     cur.execute("""SELECT o.*, c.name, c.phone FROM orders o 
                    JOIN customers c ON o.customer_id = c.id 
                    ORDER BY o.due_date ASC LIMIT 5""")
     recent = cur.fetchall()
+    
     db.close()
     return render_template("index.html", 
                           stats={'c': c_count, 'o': o_count, 'r': revenue}, 
@@ -95,7 +98,6 @@ def new_customer():
         try:
             db = get_db()
             cur = db.cursor()
-            # PostgreSQL-la '?' use panna koodathu, '%s' thaan use pannanum
             cur.execute("INSERT INTO customers (name, phone, address) VALUES (%s, %s, %s)",
                        (request.form['name'], request.form['phone'], request.form['address']))
             db.commit()
@@ -262,5 +264,5 @@ def receipt():
 
 if __name__ == "__main__":
     init_db()
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
