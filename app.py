@@ -4,6 +4,8 @@ import urllib.parse
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 
 app = Flask(__name__)
 
@@ -12,8 +14,17 @@ GPAY_NUMBER = "8056561764"
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db():
-    # PostgreSQL-la column names-ah vachu data edukka RealDictCursor mukkiyam
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require', cursor_factory=RealDictCursor)
+    # Render settings-la irukkura DATABASE_URL-ah direct-ah edukka idhu thaan vazhi
+    db_url = os.environ.get('DATABASE_URL')
+    if not db_url:
+        # Idhu oru safety check
+        return None
+    
+    conn = psycopg2.connect(
+        db_url, 
+        sslmode='require', 
+        cursor_factory=RealDictCursor
+    )
     return conn
 
 # Database setup (PostgreSQL Syntax)
