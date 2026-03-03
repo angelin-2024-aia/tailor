@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Service Unavailable</title>
+  <style>body{font-family:sans-serif;max-width:700px;margin:4rem auto;color:#222;padding:1rem}h1{color:#c0392b}pre{background:#f6f6f6;padding:1rem;border-radius:6px;overflow:auto}</style>
+</head>
+<body>
+  <h1>Service Unavailable</h1>
+  <p>The application cannot reach its database right now. Please check the deployment environment and database configuration.</p>
+  {% if error %}
+  <h3>Details</h3>
+  <pre>{{ error }}</pre>
+  {% endif %}
+  <p>If you're the site owner, verify the `DATABASE_URL` environment variable, ensure the user/tenant exists, and that SSL mode is correct (for some hosts add <code>?sslmode=require</code>).</p>
+</body>
+</html>
